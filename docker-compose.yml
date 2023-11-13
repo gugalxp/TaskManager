@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - vidly:/data/db
+    environment:
+      POSTGRES_DB: tbl_gerenciador_tarefas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+
+  backend:
+    depends_on:
+      - postgres
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3333:3333"
+    environment:
+      DATABASE_URL: postgres://postgres:12345@postgres:5432/tbl_gerenciador_tarefas
+
+  frontend:
+    depends_on:
+      - backend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+volumes:
+  vidly:
